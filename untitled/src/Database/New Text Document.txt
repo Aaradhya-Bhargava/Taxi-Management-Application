@@ -1,0 +1,65 @@
+-- Create the database
+CREATE DATABASE IF NOT EXISTS taxi_management;
+USE taxi_management;
+
+-- Create users table
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('driver', 'passenger') NOT NULL
+);
+
+-- Create drivers table
+CREATE TABLE drivers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    phone_number VARCHAR(20) UNIQUE NOT NULL,
+    license_number VARCHAR(50) UNIQUE NOT NULL,
+    rating DOUBLE DEFAULT 5.0
+);
+
+-- Create taxis table
+CREATE TABLE taxis (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    model VARCHAR(100) NOT NULL,
+    license_plate VARCHAR(50) UNIQUE NOT NULL,
+    driver_id INT,
+    FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE SET NULL
+);
+
+-- Create rides table
+CREATE TABLE rides (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    passenger_id INT,
+    driver_id INT,
+    pickup_location VARCHAR(255) NOT NULL,
+    drop_location VARCHAR(255) NOT NULL,
+    ride_date DATETIME NOT NULL,
+    fare DECIMAL(10,2) NOT NULL,
+    FOREIGN KEY (passenger_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (driver_id) REFERENCES drivers(id) ON DELETE SET NULL
+);
+
+-- Insert sample data
+INSERT INTO users (name, email, password, role) VALUES
+('John Doe', 'john@example.com', 'password123', 'passenger'),
+('Jane Smith', 'jane@example.com', 'password123', 'passenger');
+
+INSERT INTO drivers (name, phone_number, license_number, rating) VALUES
+('Michael Johnson', '1234567890', 'LIC12345', 4.8),
+('Sarah Lee', '0987654321', 'LIC67890', 4.9);
+
+INSERT INTO taxis (model, license_plate, driver_id) VALUES
+('Toyota Prius', 'ABC123', 1),
+('Honda Accord', 'XYZ789', 2);
+
+INSERT INTO rides (passenger_id, driver_id, pickup_location, drop_location, ride_date, fare) VALUES
+(1, 1, 'Central Park', 'Times Square', '2025-03-18 14:30:00', 25.50),
+(2, 2, 'Brooklyn', 'Manhattan', '2025-03-18 15:00:00', 30.75);
+
+-- Show all tables
+SHOW TABLES;
+
+
